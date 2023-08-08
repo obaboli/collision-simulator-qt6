@@ -3,11 +3,7 @@
 #include <QTimer>
 #include <QRandomGenerator>
 
-static constexpr int X_SPEED = 1;
-static constexpr int Y_SPEED = 2;
-
 static const double TIME_INTERVAL_MS = 1000 / 60;  // For 60fps, approximately 16.67ms
-
 
 Animation::Animation(QWidget *parent) :
     QWidget(parent)
@@ -28,7 +24,7 @@ void Animation::create_ball(int count) {
         int x = QRandomGenerator::global()->bounded(0 + diameter, width() - diameter);
         int y = QRandomGenerator::global()->bounded(0 + diameter, height() - diameter);
 
-        m_balls.append(Ball(x, y, X_SPEED, Y_SPEED, 0, 0, diameter));
+        m_balls.append(Ball(x, y, 3, 3, 0, 0, diameter));
     }
 }
 
@@ -68,30 +64,33 @@ void Animation::updateImage() {
             double dy = ball.getPositionY() - other_ball.getPositionY();
             double distance = std::sqrt(dx * dx + dy * dy);
 
-            if(distance <= ball.getDiameter() + other_ball.getDiameter()) {
+            if(distance <= ball.getDiameter() / 2 + other_ball.getDiameter() / 2) {
 
-                // Computer Resposne Velocity for Current Ball and Other Ball on Collision
-                // Elastic Collision Formulat (Reducible)
-    
-                double dvx = ball.getVelocityX() - other_ball.getVelocityX();
-                double dvy = ball.getVelocityY() - other_ball.getVelocityY();
+                // Compute Resposne Velocity for Current Ball and Other Ball using Elastic Collision
 
-                double norm_x_squared = dx * dx + dy * dy;
+                // Compute the unit normal vector
+                double magnitude = std::sqrt(dx * dx + dy * dy);
+                double nx = dx / magnitude;
+                double ny = dy /magnitude;
 
-                double factor1 = (2 * other_ball.getMass() / (ball.getMass() + other_ball.getMass())) * (dvx * dx + dvy * dy) / norm_x_squared;
-                double factor2 = (2 * ball.getMass() / (ball.getMass() + other_ball.getMass())) * (dvx * dx + dvy * dy) / norm_x_squared;
+                // Resolve velocities along the normal direction
+                double v1n = ball.getVelocityX() * nx + ball.getVelocityY() * ny;
+                double v2n = other_ball.getVelocityX() * nx + other_ball.getVelocityY() * ny;
 
-                double new_vx_ball = ball.getVelocityX() - factor1 * dx;
-                double new_vy_ball = ball.getVelocityY() - factor1 * dy;
+                // Compute new velocities after the collision
+                double v1n_final = ((ball.getMass() - other_ball.getMass()) / (ball.getMass() + other_ball.getMass())) * v1n
+                                + ((2 * other_ball.getMass()) / (ball.getMass() + other_ball.getMass())) * v2n;
 
-                double new_vx_other_ball = other_ball.getVelocityX() + factor2 * dx;
-                double new_vy_other_ball = other_ball.getVelocityY() + factor2 * dy;
+                double v2n_final = ((2 * ball.getMass()) / (ball.getMass() + other_ball.getMass())) * v1n
+                                + ((other_ball.getMass() - ball.getMass()) / (ball.getMass() + other_ball.getMass())) * v2n;
 
-                ball.setVelocityX(new_vx_ball);
-                ball.setVelocityY(new_vy_ball);
+                // Convert the scalar normal velocities into vector form
+                ball.setVelocityX(ball.getVelocityX() + (v1n_final - v1n) * nx);
+                ball.setVelocityY(ball.getVelocityY() + (v1n_final - v1n) * ny);
 
-                other_ball.setVelocityX(new_vx_other_ball);
-                other_ball.setVelocityY(new_vy_other_ball);
+                // Convert the scalar normal velocities into vector form
+                other_ball.setVelocityX(other_ball.getVelocityX() + (v2n_final - v2n) * nx);
+                other_ball.setVelocityY(other_ball.getVelocityY() + (v2n_final - v2n) * ny);
             }
         }
 
