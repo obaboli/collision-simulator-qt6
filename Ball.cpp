@@ -1,4 +1,4 @@
-#include "Ball.h"
+#include "ball.h"
 #include <cmath>
 
 const double PI = 3.14159265358979323846;
@@ -53,9 +53,9 @@ double Ball::getMass() const { return m_mass; }
 double Ball::getDiameter() const { return m_diameter; }
 
 // Move method
-void Ball::move() {
-    m_velocity_x += m_acceleration_x;
-    m_velocity_y += m_acceleration_y;
-    m_position_x += m_velocity_x;
-    m_position_y += m_velocity_y;
+void Ball::move(double deltaTime) {
+    m_velocity_x += m_acceleration_x * deltaTime;
+    m_velocity_y += m_acceleration_y * deltaTime;
+    m_position_x += m_velocity_x * deltaTime;
+    m_position_y += m_velocity_y * deltaTime;
 }

@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QList>
-#include "Ball.h"
+#include "ball.h"
 
 class Animation : public QWidget {
     Q_OBJECT

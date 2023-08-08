@@ -7,6 +7,6 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(Qt6 COMPONENTS Widgets REQUIRED)
 
-add_executable(MyApp main.cpp Animation.cpp Ball.cpp)
+add_executable(MyApp main.cpp animation.cpp ball.cpp)
 
 target_link_libraries(MyApp Qt6::Widgets)

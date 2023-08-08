@@ -31,7 +31,7 @@ public:
     double getMass() const;
     double getDiameter() const;
 
-    void move();
+    void move(double deltaTime = 1.0);
 
 private:
     double m_position_x, m_position_y;

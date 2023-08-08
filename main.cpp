@@ -1,5 +1,5 @@
 #include <QApplication>
-#include "Animation.h"
+#include "animation.h"
 
 int main(int argc, char **argv) {
     QApplication app(argc, argv);
