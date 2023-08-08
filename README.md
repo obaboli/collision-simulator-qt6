@@ -1,0 +1,1 @@
+# collision-simulator-qt6
