@@ -9,13 +9,18 @@ public:
     Collision() {}
     
     void handleBoxDetection(Ball &ball, double boxWidth, double boxHeight) {
-        if (ball.getPositionX() <= (0 + ball.getDiameter()) || ball.getPositionX() >= (boxWidth - ball.getDiameter())) {
+        double diameter = ball.getDiameter();
+        if (ball.getPositionX() <= diameter || ball.getPositionX() >= (boxWidth - diameter)) {
             double currentVx = ball.getVelocityX();
-            ball.setVelocityX(-currentVx); // Reverse X velocity
+
+            // Reverse Velocity
+            ball.setVelocityX(-currentVx); 
         }
-        if (ball.getPositionY() <= (0 + ball.getDiameter()) || ball.getPositionY() >= (boxHeight - ball.getDiameter())) {
+        if (ball.getPositionY() <= diameter || ball.getPositionY() >= (boxHeight - diameter)) {
             double currentVy = ball.getVelocityY();
-            ball.setVelocityY(-currentVy); // Reverse Y velocity
+
+            // Reverse Y velocity
+            ball.setVelocityY(-currentVy); 
         }
     }
 
@@ -25,6 +30,45 @@ public:
         double distance = std::sqrt(dx * dx + dy * dy);
 
         return (distance <= ball1.getDiameter() / 2 + ball2.getDiameter() / 2);
+    }
+
+    // Since we're using discrete collision detection we need to handle cases of overlap still
+    // One way to handle that is to use slower velocities on the balls but was still seeing some overlap
+    // These reposition functions will detect how far the overlap is and reset the position to remove the overlap otherwise the balls get stuck forever :(
+    // TODO: CCD algorithm? 
+    void repositionAfterWallCollision(Ball &ball, double boxWidth, double boxHeight) {
+        double diameter = ball.getDiameter();
+        if (ball.getPositionX() <= diameter) {
+            ball.setPositionX(diameter); 
+        } else if (ball.getPositionX() >= (boxWidth - diameter)) {
+            ball.setPositionX(boxWidth - diameter); 
+        }
+        
+        if (ball.getPositionY() <= diameter) {
+            ball.setPositionY(diameter); 
+        } else if (ball.getPositionY() >= (boxHeight - diameter)) {
+            ball.setPositionY(boxHeight - diameter); 
+        }
+    }
+
+    void repositionAfterBallCollision(Ball &ball1, Ball &ball2) {
+        double dx = ball1.getPositionX() - ball2.getPositionX();
+        double dy = ball1.getPositionY() - ball2.getPositionY();
+        double distance = std::sqrt(dx * dx + dy * dy);
+
+        double overlap = (ball1.getDiameter() / 2 + ball2.getDiameter() / 2) - distance;
+        double nx = dx / distance;
+        double ny = dy / distance;
+
+        // Repositioning the balls based on their masses
+        double totalMass = ball1.getMass() + ball2.getMass();
+        double move1 = (overlap * (ball2.getMass() / totalMass));
+        double move2 = (overlap * (ball1.getMass() / totalMass));
+
+        ball1.setPositionX(ball1.getPositionX() + nx * move1);
+        ball1.setPositionY(ball1.getPositionY() + ny * move1);
+        ball2.setPositionX(ball2.getPositionX() - nx * move2);
+        ball2.setPositionY(ball2.getPositionY() - ny * move2);
     }
 
     void handleResponseVelocity(Ball &ball1, Ball &ball2) {

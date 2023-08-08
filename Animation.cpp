@@ -9,14 +9,14 @@ static const double TIME_INTERVAL_MS = 1000 / 60;  // For 60fps, approximately 1
 Animation::Animation(QWidget *parent) :
     QWidget(parent)
 {
-    create_ball(10);  
+    addBall(10);  
 
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Animation::updateImage);
     timer->start(TIME_INTERVAL_MS);
 }
 
-void Animation::create_ball(int count) {
+void Animation::addBall(int count) {
     for(int i = 0; i < count; ++i) {
         // Randomize Ball Diameter
         int diameter = QRandomGenerator::global()->bounded(10, 30);
@@ -49,12 +49,15 @@ void Animation::updateImage() {
 
         collisionHandler.handleBoxDetection(ball, width(), height());
 
+        collisionHandler.repositionAfterWallCollision(ball, width(), height());
+
         for(Ball &other_ball: m_balls) {
             // Skip if same ball
             if(&ball == &other_ball) continue;
 
             if (collisionHandler.isColliding(ball, other_ball)) {
                 collisionHandler.handleResponseVelocity(ball, other_ball);
+                collisionHandler.repositionAfterBallCollision(ball, other_ball);
             }
         }
 

@@ -20,7 +20,7 @@ private slots:
 private:
     QList<Ball> m_balls;
 
-    void create_ball(int count); // Creates a number of balls with random properties
+    void addBall(int count); 
 };
 
 
