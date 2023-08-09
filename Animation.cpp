@@ -40,21 +40,27 @@ void Animation::paintEvent(QPaintEvent *) {
         painter.drawEllipse(ballRect);
     }
 }
+bool compareXPosition(const Ball& ball1, const Ball& ball2) {
+    return ball1.getPositionX() < ball2.getPositionX();
+}
 
 void Animation::updateImage() {
     Collision collisionHandler;
 
-    for(Ball &ball : m_balls) {
-        ball.move();
+    std::sort(m_balls.begin(), m_balls.end(), compareXPosition);
 
+    for (size_t i = 0; i < m_balls.size(); ++i) {
+        Ball &ball = m_balls[i];
+        ball.move();
+        
         if (collisionHandler.isCollisionWithBox(ball, width(), height())) {
             collisionHandler.resolveBoxCollision(ball);
             collisionHandler.repositionAfterWallCollision(ball, width(), height());
         }
 
-        for(Ball &other_ball: m_balls) {
-            // Skip if same ball
-            if(&ball == &other_ball) continue;
+        for (size_t j = i + 1; j < m_balls.size(); ++j) {
+            Ball &other_ball = m_balls[j];
+            if(ball.getPositionX() + ball.getDiameter() < other_ball.getPositionX() - other_ball.getDiameter()) break;
 
             if (collisionHandler.isCollisionWithObject(ball, other_ball)) {
                 collisionHandler.handleResponseVelocity(ball, other_ball);
