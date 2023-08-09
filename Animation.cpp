@@ -47,15 +47,16 @@ void Animation::updateImage() {
     for(Ball &ball : m_balls) {
         ball.move();
 
-        collisionHandler.handleBoxDetection(ball, width(), height());
-
-        collisionHandler.repositionAfterWallCollision(ball, width(), height());
+        if (collisionHandler.isCollisionWithBox(ball, width(), height())) {
+            collisionHandler.resolveBoxCollision(ball);
+            collisionHandler.repositionAfterWallCollision(ball, width(), height());
+        }
 
         for(Ball &other_ball: m_balls) {
             // Skip if same ball
             if(&ball == &other_ball) continue;
 
-            if (collisionHandler.isColliding(ball, other_ball)) {
+            if (collisionHandler.isCollisionWithObject(ball, other_ball)) {
                 collisionHandler.handleResponseVelocity(ball, other_ball);
                 collisionHandler.repositionAfterBallCollision(ball, other_ball);
             }
