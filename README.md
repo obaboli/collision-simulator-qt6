@@ -1,7 +1,15 @@
 
+
+## Installation
+
+```
+brew install qt6
+brew install cmake
+```
 ## Build
 
 ```
-cmake -B build -DCMAKE_PREFIX_PATH=/Users/baboli/Qt/6.5.2/macos/lib/cmake
-cd build && make -j
+cmake -B build 
+cd build 
+make -j
 ```

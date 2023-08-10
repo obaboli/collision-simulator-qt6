@@ -1,4 +1,5 @@
 #include "collision.h"
+#include <cmath>
 
 Collision::Collision() {}
 
@@ -13,12 +14,12 @@ bool Collision::isCollisionWithBox(const Ball &ball, double boxWidth, double box
     return false;
 }
 
-bool Collision::isCollisionWithObject(Ball &ball1, Ball &ball2) {
+bool Collision::isCollisionWithObject(const Ball &ball1, const Ball &ball2) {
     double dx = ball1.getPositionX() - ball2.getPositionX();
     double dy = ball1.getPositionY() - ball2.getPositionY();
     double distance = std::sqrt(dx * dx + dy * dy);
 
-    return (distance <= ball1.getDiameter() / 2 + ball2.getDiameter() / 2);
+    return (distance <= ball1.getDiameter() / 2.0 + ball2.getDiameter() / 2.0);
 }
 
 void Collision::resolveBoxCollision(Ball &ball) {
@@ -82,7 +83,7 @@ void Collision::repositionAfterBallCollision(Ball &ball1, Ball &ball2) {
     double dy = ball1.getPositionY() - ball2.getPositionY();
     double distance = std::sqrt(dx * dx + dy * dy);
 
-    double overlap = (ball1.getDiameter() / 2 + ball2.getDiameter() / 2) - distance;
+    double overlap = (ball1.getDiameter() / 2.0 + ball2.getDiameter() / 2.0) - distance;
     double nx = dx / distance;
     double ny = dy / distance;
 

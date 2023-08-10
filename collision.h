@@ -2,14 +2,13 @@
 #define COLLISION_H
 
 #include "ball.h"
-#include <cmath>
 
 class Collision {
 public:
     Collision();
     
     // Narrow Phase
-    bool isCollisionWithObject(Ball &ball1, Ball &ball2);
+    bool isCollisionWithObject(const Ball &ball1, const Ball &ball2);
     bool isCollisionWithBox(const Ball &ball, double boxWidth, double boxHeight);
 
     // Solve Collision

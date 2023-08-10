@@ -4,18 +4,17 @@
 #include <QTimer>
 #include <QRandomGenerator>
 
-static const double TIME_INTERVAL_MS = 1000 / 60;  // For 60fps, approximately 16.67ms
+static const double TIME_INTERVAL_MS = (1000 / 60.0);  // For 60fps, approximately 16.67ms
 
-#if PERFORMANCE_MODE == 1
-    static const int TOTAL_BALL_COUNT = 30;
-#else
-    static const int TOTAL_BALL_COUNT = 10;
-#endif
+static const int TOTAL_BALL_COUNT = 30;
+
+static const int INITIAL_BALL_SPEED = 1;
+static const int INITIAL_BALL_ACCELERATION = 0;
 
 Animation::Animation(QWidget *parent) :
     QWidget(parent)
 {
-    addBall(30);  
+    addBall(TOTAL_BALL_COUNT);  
 
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Animation::updateImage);
@@ -31,7 +30,7 @@ void Animation::addBall(int count) {
         int x = QRandomGenerator::global()->bounded(0 + diameter, width() - diameter);
         int y = QRandomGenerator::global()->bounded(0 + diameter, height() - diameter);
 
-        m_balls.append(Ball(x, y, 1, 1, 0, 0, diameter));
+        m_balls.append(Ball(x, y, INITIAL_BALL_SPEED, INITIAL_BALL_SPEED, INITIAL_BALL_ACCELERATION, INITIAL_BALL_ACCELERATION, diameter));
     }
 }
 
@@ -40,12 +39,13 @@ void Animation::paintEvent(QPaintEvent *) {
     painter.setRenderHint(QPainter::Antialiasing);
 
     for(Ball &ball : m_balls) {
-        painter.setBrush(Qt::red);
+        painter.setBrush(Qt::blue);
 
         QRectF ballRect(ball.getPositionX(), ball.getPositionY(), ball.getDiameter(), ball.getDiameter());
         painter.drawEllipse(ballRect);
     }
 }
+
 bool compareXPosition(const Ball& ball1, const Ball& ball2) {
     return ball1.getPositionX() < ball2.getPositionX();
 }
@@ -53,6 +53,7 @@ bool compareXPosition(const Ball& ball1, const Ball& ball2) {
 void Animation::updateImage() {
     Collision collisionHandler;
 
+    // Sweep and Prune Algorithm 
     std::sort(m_balls.begin(), m_balls.end(), compareXPosition);
 
     for (size_t i = 0; i < m_balls.size(); ++i) {

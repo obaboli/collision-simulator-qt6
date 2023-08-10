@@ -2,7 +2,7 @@
 #include <cmath>
 
 const double PI = 3.14159265358979323846;
-const double AREA_DENSITY = 0.5;  // Example value, adjust as needed
+const double AREA_DENSITY = 0.5; 
 
 Ball::Ball(double position_x, double position_y, 
            double velocity_x, double velocity_y,
