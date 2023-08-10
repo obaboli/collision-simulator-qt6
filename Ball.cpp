@@ -11,7 +11,7 @@ Ball::Ball(double position_x, double position_y,
     : m_position_x(position_x), m_position_y(position_y),
       m_velocity_x(velocity_x), m_velocity_y(velocity_y),
       m_acceleration_x(acceleration_x), m_acceleration_y(acceleration_y), 
-      m_diameter(diameter) {
+      m_diameter(diameter), m_collisionEffectCounter(0) {
 
     // Calculate mass based on diameter
     
@@ -53,4 +53,18 @@ void Ball::move(double deltaTime) {
     m_velocity_y += m_acceleration_y * deltaTime;
     m_position_x += m_velocity_x * deltaTime;
     m_position_y += m_velocity_y * deltaTime;
+}
+
+void Ball::triggerCollisionEffect() {
+  m_collisionEffectCounter = 4;
+}
+
+bool Ball::hasActiveCollisionEffect() {
+  return m_collisionEffectCounter > 0; 
+}
+
+void Ball::decrementCollisionEffectCounter(){
+  if (m_collisionEffectCounter > 0) {
+    m_collisionEffectCounter--;
+  }
 }

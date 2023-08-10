@@ -4,7 +4,7 @@
 #include <QTimer>
 #include <QRandomGenerator>
 
-static const double TIME_INTERVAL_MS = (1000 / 60.0);  // For 60fps, approximately 16.67ms
+static const double TIME_INTERVAL_MS = (1000 / 24.0);  // For 60fps, approximately 16.67ms
 
 static const int TOTAL_BALL_COUNT = 30;
 
@@ -39,7 +39,11 @@ void Animation::paintEvent(QPaintEvent *) {
     painter.setRenderHint(QPainter::Antialiasing);
 
     for(Ball &ball : m_balls) {
-        painter.setBrush(Qt::blue);
+        if (ball.hasActiveCollisionEffect()) {
+            painter.setBrush(Qt::darkBlue); 
+        } else {
+            painter.setBrush(Qt::blue);
+        }
 
         QRectF ballRect(ball.getPositionX(), ball.getPositionY(), ball.getDiameter(), ball.getDiameter());
         painter.drawEllipse(ballRect);
@@ -59,10 +63,13 @@ void Animation::updateImage() {
     for (size_t i = 0; i < m_balls.size(); ++i) {
         Ball &ball = m_balls[i];
         ball.move();
+
+        ball.decrementCollisionEffectCounter();
         
         if (collisionHandler.isCollisionWithBox(ball, width(), height())) {
             collisionHandler.resolveBoxCollision(ball);
             collisionHandler.repositionAfterWallCollision(ball, width(), height());
+            ball.triggerCollisionEffect();
         }
 
         for (size_t j = i + 1; j < m_balls.size(); ++j) {
@@ -72,6 +79,8 @@ void Animation::updateImage() {
             if (collisionHandler.isCollisionWithObject(ball, other_ball)) {
                 collisionHandler.handleResponseVelocity(ball, other_ball);
                 collisionHandler.repositionAfterBallCollision(ball, other_ball);
+                ball.triggerCollisionEffect();
+                other_ball.triggerCollisionEffect();
             }
         }
 

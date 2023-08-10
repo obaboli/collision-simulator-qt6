@@ -33,12 +33,17 @@ public:
 
     void move(double deltaTime = 1.0);
 
+    void triggerCollisionEffect() ;
+    bool hasActiveCollisionEffect();
+    void decrementCollisionEffectCounter();
+
 private:
     double m_position_x, m_position_y;
     double m_velocity_x,  m_velocity_y;
     double m_acceleration_x, m_acceleration_y;
     double m_mass;
     double m_diameter;
+    int m_collisionEffectCounter;
 };
 
 #endif // BALL_H
