@@ -6,10 +6,16 @@
 
 static const double TIME_INTERVAL_MS = 1000 / 60;  // For 60fps, approximately 16.67ms
 
+#if PERFORMANCE_MODE == 1
+    static const int TOTAL_BALL_COUNT = 30;
+#else
+    static const int TOTAL_BALL_COUNT = 10;
+#endif
+
 Animation::Animation(QWidget *parent) :
     QWidget(parent)
 {
-    addBall(10);  
+    addBall(30);  
 
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Animation::updateImage);
