@@ -4,9 +4,9 @@
 class Ball {
 public:
     Ball(double position_x, double position_y, 
-         double velocity_x, double velocity_y,
-         double acceleration_x, double acceleration_y, 
-         double diameter);
+           double velocity_x, double velocity_y,
+           double acceleration_x, double acceleration_y, 
+           double diameter, int number);
 
 
     double getPositionX() const;
@@ -37,6 +37,10 @@ public:
     bool hasActiveCollisionEffect();
     void decrementCollisionEffectCounter();
 
+    int getNumber() const { 
+        return m_number; 
+    }
+
 private:
     double m_position_x, m_position_y;
     double m_velocity_x,  m_velocity_y;
@@ -44,6 +48,7 @@ private:
     double m_mass;
     double m_diameter;
     int m_collisionEffectCounter;
+    int m_number;
 };
 
 #endif // BALL_H

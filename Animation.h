@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QList>
+#include <QElapsedTimer>
 #include "ball.h"
 
 class Animation : public QWidget {
@@ -19,6 +20,7 @@ private slots:
 
 private:
     QList<Ball> m_balls;
+    QElapsedTimer m_programTimer;
 
     void addBall(int count); 
 };

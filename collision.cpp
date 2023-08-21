@@ -1,5 +1,6 @@
 #include "collision.h"
 #include <cmath>
+#include <iostream>
 
 Collision::Collision() {}
 
