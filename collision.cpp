@@ -23,12 +23,27 @@ bool Collision::isCollisionWithObject(const Ball &ball1, const Ball &ball2) {
     return (distance <= ball1.getDiameter() / 2.0 + ball2.getDiameter() / 2.0);
 }
 
-void Collision::resolveBoxCollision(Ball &ball) {
-    if (ball.getPositionX() <= ball.getDiameter() || ball.getPositionX() >= ball.getDiameter()) {
-        ball.setVelocityX(-ball.getVelocityX());  // Reverse X velocity
+void Collision::resolveBoxCollision(Ball &ball,  double boxWidth, double boxHeight) {
+    double diameter = ball.getDiameter();
+
+    // Check collision with left wall
+    if (ball.getPositionX() <= 0) {
+        ball.setVelocityX(std::abs(ball.getVelocityX()));  // Ensure positive X velocity
     }
-    if (ball.getPositionY() <= ball.getDiameter() || ball.getPositionY() >= ball.getDiameter()) {
-        ball.setVelocityY(-ball.getVelocityY());  // Reverse Y velocity
+
+    // Check collision with right wall
+    if (ball.getPositionX() + diameter >= boxWidth) {
+        ball.setVelocityX(-std::abs(ball.getVelocityX()));  // Ensure negative X velocity
+    }
+
+    // Check collision with top wall
+    if (ball.getPositionY() <= 0) {
+        ball.setVelocityY(std::abs(ball.getVelocityY()));  // Ensure positive Y velocity
+    }
+
+    // Check collision with bottom wall
+    if (ball.getPositionY() + diameter >= boxHeight) {
+        ball.setVelocityY(-std::abs(ball.getVelocityY()));  // Ensure negative Y velocity
     }
 }
 
@@ -66,15 +81,16 @@ void Collision::handleResponseVelocity(Ball &ball1, Ball &ball2) {
 // TODO: CCD algorithm? 
 void Collision::repositionAfterWallCollision(Ball &ball, double boxWidth, double boxHeight) {
     double diameter = ball.getDiameter();
-    if (ball.getPositionX() <= diameter) {
-        ball.setPositionX(diameter); 
-    } else if (ball.getPositionX() >= (boxWidth - diameter)) {
+
+    if (ball.getPositionX() < 0) {
+        ball.setPositionX(0); 
+    } else if (ball.getPositionX() + diameter > boxWidth) {
         ball.setPositionX(boxWidth - diameter); 
     }
     
-    if (ball.getPositionY() <= diameter) {
-        ball.setPositionY(diameter); 
-    } else if (ball.getPositionY() >= (boxHeight - diameter)) {
+    if (ball.getPositionY() < 0) {
+        ball.setPositionY(0); 
+    } else if (ball.getPositionY() + diameter > boxHeight) {
         ball.setPositionY(boxHeight - diameter); 
     }
 }

@@ -1,5 +1,6 @@
 #include "animation.h"
 #include "collision.h"
+
 #include <QPainter>
 #include <QTimer>
 #include <QRandomGenerator>
@@ -8,15 +9,16 @@
 
 static const double TIME_INTERVAL_MS = (1000 / 24.0);  // For 60fps, approximately 16.67ms
 
-static const int TOTAL_BALL_COUNT = 5;
+static const int TOTAL_BALL_COUNT = 8;
 
-static const int INITIAL_BALL_SPEED = 1;
+static const int INITIAL_BALL_SPEED = 2;
 static const int INITIAL_BALL_ACCELERATION = 0;
 
 Animation::Animation(QWidget *parent) :
     QWidget(parent)
 {
     m_programTimer.start();
+
     addBall(TOTAL_BALL_COUNT);  
 
     QTimer *timer = new QTimer(this);
@@ -28,7 +30,7 @@ Animation::Animation(QWidget *parent) :
 void Animation::addBall(int count) {
     for(int i = 0; i < count; ++i) {
         // Randomize Ball Diameter
-        int diameter = QRandomGenerator::global()->bounded(20, 30);
+        int diameter = QRandomGenerator::global()->bounded(20, 40);
 
         // Randomize Ball starting Position
         int x = QRandomGenerator::global()->bounded(0 + diameter, width() - diameter);
@@ -81,7 +83,7 @@ void Animation::updateImage() {
             elapsedMilliseconds = m_programTimer.elapsed();
             std::cout << elapsedMilliseconds << "ms - Box Collision - Ball " << ball.getNumber() << std::endl; 
 
-            collisionHandler.resolveBoxCollision(ball);
+            collisionHandler.resolveBoxCollision(ball, width(), height());
             collisionHandler.repositionAfterWallCollision(ball, width(), height());
             ball.triggerCollisionEffect();
         }
